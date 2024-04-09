@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
+ 
     <!-- JQuery -->
     <script th:src="@{/script/jquery-3.7.1.min.js}"></script>
+
+    <!-- IP와 국가명 추출하는 코드 -->
     <script>
-        $(function () {
-            $.getJSON("https://api.ipify.org?format=json",function (data) {
-                console.log(data.ip);
-                $.getJSON("http://ip-api.com/json/${data.ip}?fields=country", function (location) {
-                    console.log(location.country);
-                    $("#ip").text(data.ip);
-                    $("#country").text(location.country);
-                })
-            })
-        })
+        $.ajax({
+            url:"https://api.ip.pe.kr/json"
+        }).done(function (api) {
+            $("#ip").text(api.ip);
+            $("#country").text(api.country_name.en);
+        }).fail(function () {
+            alert("로딩하는데 실패하였습니다.");
+        });
     </script>
 
 </head>

@@ -7,19 +7,18 @@
 
     <!-- JQuery -->
     <script th:src="@{/script/jquery-3.7.1.min.js}"></script>
+    
+    <!-- IP와 국가명 추출하는 코드 -->
     <script>
-        $(function () {
-            // 아이피 -> 국가
-            let remoteIp = $("#remoteIp").val();
-            $.ajax({
-                url:"/product/getCountry",
-                data:{"remoteIp":remoteIp},
-                success : function (resp) {
-                    $("#country").val(resp);
-                }
-            })
-
-        })
+        $.ajax({
+            url:"https://api.ip.pe.kr/json"
+        }).done(function (api) {
+            $("#remoteIp").val(api.ip);
+            $("#country").val(api.country_name.en);
+            $("#country_cd").val(api.country_code);
+        }).fail(function () {
+            alert("로딩하는데 실패하였습니다.");
+        });
     </script>
 
 
@@ -32,13 +31,13 @@
     <h2>상품 등록</h2>
 
     <form th:action="@{/product/insert}" method="post" enctype="multipart/form-data">
-        상품명 : <input type="text" name="prodName">
-        상품설명 : <input type="text" name="prodDesc">
-        상품 대표 이미지 : <input type="file" name="uploadFile" id="uploadFile">
-        상품가격 : <input type="number" name="price">
-        원산지 : <input type="text" name="origin">
+        상품명 : <input type="text" name="prodName"> <br>
+        상품설명 : <input type="text" name="prodDesc"> <br>
+        상품 대표 이미지 : <input type="file" name="uploadFile" id="uploadFile"> <br>
+        상품가격 :  $US <input type="number" name="price"> <br>
+        원산지 : <input type="text" name="origin"> <br>
         최소주문수량 : <input type="number" name="moq">
-        단위 : <input type="text" name="unit">
+        단위 : <input type="text" name="unit"> <br>
         카테고리 : <select name="category" id="">
                         <option value="FOOD_BEVERAGE">FOOD_BEVERAGE</option>
                         <option value="CHEMICAL">CHEMICAL</option>
@@ -46,9 +45,10 @@
                         <option value="ELECTRONIC">ELECTRONIC</option>
                         <option value="COSMETIC">COSMETIC</option>
                     </select>
-        <!-- 아이피 : <input type="text" name="remoteIp" id="remoteIp" value="157.185.144.90" readonly> -->
-        아이피 : <input type="hidden" name="remoteIp" id="remoteIp" value="66.115.142.149" readonly>
+                    <br>
+        아이피 : <input type="text" name="remoteIp" id="remoteIp"  readonly>
         국가명 : <input type="text" name="country" id="country" readonly>
+        국가코드 : <input type="text"  id="country_cd" readonly> <br>
         판매자 : <input type="text" name="customerId">
         <br>
         <input type="submit" value="등록">
