@@ -76,4 +76,12 @@ public class ProductController {
 
         return result.get("country");
     }
+
+// ---------------------------- IP -------------------------------------
+    @GetMapping("/product/getIp")
+    public String getIp() {
+        return "confirmIP";
+    }
+    
+
 }

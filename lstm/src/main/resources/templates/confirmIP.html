@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- JQuery -->
+    <script th:src="@{/script/jquery-3.7.1.min.js}"></script>
+    <script>
+        $(function () {
+            $.getJSON("https://api.ipify.org?format=json",function (data) {
+                console.log(data.ip);
+                $.getJSON("http://ip-api.com/json/${data.ip}?fields=country", function (location) {
+                    console.log(location.country);
+                    $("#ip").text(data.ip);
+                    $("#country").text(location.country);
+                })
+            })
+        })
+    </script>
+
+</head>
+<body>
+
+    <h2>아이피와 국가 확인</h2>
+    
+    <p>IP: <span id="ip">검색 중...</span></p>
+    <p>국가: <span id="country">검색 중...</span></p>
+
+
+</body>
+</html>
