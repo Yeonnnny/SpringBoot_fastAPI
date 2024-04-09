@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,7 +53,7 @@ public class ProductController {
     public String insert(@ModelAttribute ProdDTO prodDTO, Model model) {
 
         // prodId 생성
-        String ca = prodDTO.getCategory().toString().substring(0, 2);
+        String ca = prodDTO.getCategory().getCategoryCode();
         String prodId = ProductController.generateId(ca);
         log.info("==========prodId 생성해써 : " + prodId);
         prodDTO.setProdId(prodId);
@@ -77,11 +76,10 @@ public class ProductController {
         return result.get("country");
     }
 
-// ---------------------------- IP -------------------------------------
+    // ---------------------------- IP -------------------------------------
     @GetMapping("/product/getIp")
     public String getIp() {
         return "confirmIP";
     }
-    
 
 }
