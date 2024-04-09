@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 보기</title>
+
+    <!-- JQuery -->
+    <script th:src="@{/script/jquery-3.7.1.min.js}"></script>
+
+
+
+</head>
+<body>
+    
+    <h2>상품 등록</h2>
+    <th:block th:if="${product==null}">
+        ㅎㅎ
+    </th:block>
+    
+    <th:block th:unless="${product==null}">
+        <!-- 판매자 : <input type="text" name="customerId" th:text="${product.customerId}" readonly> <br> -->
+        상품명 : <input type="text" name="prodName" th:text="${product.prodName}" readonly><br>
+        상품설명 : <input type="text" name="prodDesc" th:text="${product.prodDesc}" readonly><br>
+        상품 대표 이미지 : <input type="file" name="prodImg" id="prodImg"><br>
+        상품가격 : <input type="number" name="price" th:text="${product.price}" readonly><br>
+        원산지 : <input type="text" name="origin" th:text="${product.origin}" readonly><br>
+        최소주문수량 : <input type="number" name="moq" th:text="${product.moq}" readonly><br>
+        단위 : <input type="text" name="unit" th:text="${product.unit}" readonly><br>
+        카테고리 : <input type="text" th:text="${product.category}" readonly><br>
+        아이피 : <input type="text" name="remoteIp" value="157.185.144.90" readonly><br>
+        국가 : <input type="text" name="country" th:text="${product.country}" readonly><br>
+    
+        <br>
+        lstm결과 : [[${product.lstmPredict}]] <br>
+        lstm확률 : [[${product.lstmPredictProba}]]
+    </th:block>
+    
+
+</body>
+</html>
