@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Lstm {
+    private String prodId;
     private String productNM;
     private String productDesc;
 }

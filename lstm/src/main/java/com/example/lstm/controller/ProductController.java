@@ -45,16 +45,23 @@ public class ProductController {
         return id;
     }
 
-    // 이미지 업로드 경로 요청
+    // 이미지 업로드 경로
     @Value("${spring.servlet.multipart.location}")
     String uploadPath;
 
+    /**
+     * 상품 정보 입력받아 DB에 저장 요청
+     * 
+     * @param prodDTO
+     * @param model
+     * @return
+     */
     @PostMapping("/product/insert")
     public String insert(@ModelAttribute ProdDTO prodDTO, Model model) {
 
         // prodId 생성
-        String ca = prodDTO.getCategory().getCategoryCode();
-        String prodId = ProductController.generateId(ca);
+        String categoryCode = prodDTO.getCategory().getCategoryCode();
+        String prodId = ProductController.generateId(categoryCode);
         log.info("==========prodId 생성해써 : " + prodId);
         prodDTO.setProdId(prodId);
 
@@ -65,15 +72,6 @@ public class ProductController {
         model.addAttribute("uploadPath", uploadPath); // 이미지 출력을 위해
 
         return "productDetail";
-    }
-
-    @GetMapping("/product/getCountry")
-    @ResponseBody
-    public String getCountry(@RequestParam(name = "remoteIp") String remoteIp) {
-
-        Map<String, String> result = modelService.getCountry(new Ip(remoteIp));
-
-        return result.get("country");
     }
 
     // ---------------------------- IP -------------------------------------

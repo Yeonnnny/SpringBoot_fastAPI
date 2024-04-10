@@ -23,39 +23,16 @@ import lombok.extern.slf4j.Slf4j;
 public class ModelService {
     private final RestTemplate restTemplate;
 
-    @Value("${country.predict.server}")
-    String countryUrl;
-
-    public Map<String,String> getCountry(Ip remoteIp){
-        Map<String,String> error = new HashMap<>();
-        Map<String,String> result = null;
-
-        try {
-            //헤더 설정
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-            ResponseEntity<Map> response = restTemplate.postForEntity(countryUrl, remoteIp, Map.class);
-            result = response.getBody();
-        } catch (Exception e) {
-            error.put("statusCode", "450");
-            error.put("body", "오류났어요");
-            return error;
-        }
-
-        return result;
-    }
-
+    // lstm server 경로
     @Value("${lstm.predict.server}")
     String lstmUrl;
 
-    public Map<String,String> predictLSTM(Lstm lstm){
-        Map<String,String> error = new HashMap<>();
-        Map<String,String> result = null;
+    public Map<String, String> predictLSTM(Lstm lstm) {
+        Map<String, String> error = new HashMap<>();
+        Map<String, String> result = null;
 
         try {
-            //헤더 설정
+            // 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -67,7 +44,6 @@ public class ModelService {
             error.put("body", "오류났어요");
             return error;
         }
-
         return result;
     }
 

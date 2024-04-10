@@ -39,23 +39,17 @@ public class ProductService {
             dto.setSavedFileName(savedFileName); // entity로 변환 전 dto의 savedFileName 변경해주기
         }
 
-        // 국가 코드
-        Ip remoteIp = new Ip(dto.getRemoteIp());
-        Map<String, String> ipCountry =  modelService.getCountry(remoteIp);
-        log.info("================= ip-country : {}",ipCountry);
-        dto.setCountry(ipCountry.get("country"));
-        
-        
         // lstm
-        Lstm lstm = new Lstm(dto.getProdName(), dto.getProdDesc());
-        
-        Map<String,String> result = modelService.predictLSTM(lstm);
+        Lstm lstm = new Lstm(dto.getProdId(), dto.getProdName(), dto.getProdDesc()); // lstm 객체 생성
+
+        Map<String, String> result = modelService.predictLSTM(lstm);
+        // {'lstm_predict':lstm_predict,
+        // 'lstm_predict_proba':np.round(lstm_predict_proba*100,2)} 이 형식으로 결과 반환됨
 
         log.info("================= lstm결과 : {}", result);
-        dto.setLstmPredict(Boolean.parseBoolean(result.get("lstm_predict")));
-        dto.setLstmPredictProba(Float.parseFloat(result.get("lstm_predict_proba")) );
-        
-        
+        // dto.setLstmPredict(Boolean.parseBoolean(result.get("lstm_predict")));
+        // dto.setLstmPredictProba(Float.parseFloat(result.get("lstm_predict_proba")));
+
         return null;
 
         // ProdEntity entity = ProdEntity.toEntity(dto);
