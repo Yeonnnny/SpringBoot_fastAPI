@@ -72,7 +72,7 @@ public class ProdEntity {
     private int hitCount;
 
     @Column(name = "lstm_predict_proba", nullable = false)
-    private float lstmPredictProba;
+    private double lstmPredictProba;
 
     @Column(name = "lstm_predict", nullable = false)
     private boolean lstmPredict;

@@ -10,15 +10,63 @@
     
     <!-- IP와 국가명 추출하는 코드 -->
     <script>
-        $.ajax({
-            url:"https://api.ip.pe.kr/json"
-        }).done(function (api) {
-            $("#remoteIp").val(api.ip);
-            $("#country").val(api.country_name.en);
-            $("#country_cd").val(api.country_code);
-        }).fail(function () {
-            alert("로딩하는데 실패하였습니다.");
-        });
+        $(function(){
+            // $("#submitBtn").on("click",getLstm);
+            init();
+        })
+
+        // function getLstm() {
+        //     let prodName = $("#prodName").val();
+        //     let prodDesc = $("#prodDesc").val();
+
+        //     $.ajax({
+        //         url: "/product/getLstm",
+        //         method:"GET",
+        //         data : {"prodName": prodName , "prodDesc": prodDesc },
+        //         success: function (resp) {
+        //             console.log(resp);
+        //             //console.log(typeof resp);
+
+        //             //let data1 = JSON.stringify(resp);
+        //             //console.log(data1);
+        //             //console.log(typeof data1);
+
+        //             //let data2 = JSON.parse(resp);
+        //             //console.log(data2);
+        //             //console.log(typeof data2);
+        //             // if (resp.length > 0) {
+        //             //     console.log(resp[0]);
+        //             //     let lstm_predict = resp[0]["lstm_predict"];
+        //             //     let lstm_predict_proba = resp[0]["lstm_predict_proba"];
+        //             //     console.log("lstm_predict: " + lstm_predict + ", lstm_predict_proba: " + lstm_predict_proba);
+        //             // }
+
+        //             // for (let i = 0; i < data.length; i++){
+        //             //     if ("lstm_predict" in data[i]) {
+        //             //         let lstm_predict = data[i]['lstm_predict'];
+        //             //         let lstm_predict_proba = data[i]['lstm_predict_proba'];
+        //             //         console.log("lstmPredict : " + lstm_predict + ", lstmPredictProba : " + lstm_predict_proba);
+
+        //             //         $("lstmPredict").val(Boolean.parseBoolean(lstm_predict));
+        //             //         $("lstmPredictProba").val(Float.parseFloat(lstm_predict_proba));
+        //             //     }
+        //             // }
+        //         }
+        //     })
+        // }
+        
+
+        function init() {
+            $.ajax({
+                url: "https://api.ip.pe.kr/json"
+            }).done(function (api) {
+                $("#remoteIp").val(api.ip);
+                $("#country").val(api.country_name.en);
+                $("#country_cd").val(api.country_code);
+            }).fail(function () {
+                alert("로딩하는데 실패하였습니다.");
+            });
+        }
     </script>
 
 
@@ -31,8 +79,8 @@
     <h2>상품 등록</h2>
 
     <form th:action="@{/product/insert}" method="post" enctype="multipart/form-data">
-        상품명 : <input type="text" name="prodName"> <br>
-        상품설명 : <input type="text" name="prodDesc"> <br>
+        상품명 : <input type="text" id="prodName" name="prodName"> <br>
+        상품설명 : <input type="text" id="prodDesc" name="prodDesc"> <br>
         상품 대표 이미지 : <input type="file" name="uploadFile" id="uploadFile"> <br>
         상품가격 :  $US <input type="number" name="price"> <br>
         원산지 : <input type="text" name="origin"> <br>
@@ -50,8 +98,14 @@
         국가명 : <input type="text" name="country" id="country" readonly>
         국가코드 : <input type="text"  id="country_cd" readonly> <br>
         판매자 : <input type="text" name="customerId">
+        
+        <!-- <input type="hidden" id="lstmPredict" name="lstmPredict">
+        <input type="hidden" id="lstmPredictProba" name="lstmPredictProba">
+        <input type="hidden" id="prohibit" name="prohibit"> -->
+
+
         <br>
-        <input type="submit" value="등록">
+        <input type="submit" id="submitBtn" value="등록">
     </form>
 
 </body>

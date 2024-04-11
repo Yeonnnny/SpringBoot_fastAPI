@@ -2,6 +2,7 @@ package com.example.lstm.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.lstm.dto.ProdDTO;
-import com.example.lstm.dto.modelDTO.Ip;
 import com.example.lstm.service.ModelService;
 import com.example.lstm.service.ProductService;
+
 
 @Controller
 @Slf4j
@@ -73,6 +74,19 @@ public class ProductController {
 
         return "productDetail";
     }
+
+    @GetMapping("/product/getLstm")
+    @ResponseBody
+    public List<Map<String, Object>> getLstm(@RequestParam(name = "prodName")String prodName, 
+            @RequestParam(name = "prodDesc") String prodDesc) {
+
+        List<Map<String, Object>> result = productService.resultLstm(prodName, prodDesc);
+        log.info("{}",result);
+        // String data = result.replace("'", "\"");
+        // log.info(data);
+        return result;
+    }
+    
 
     // ---------------------------- IP -------------------------------------
     @GetMapping("/product/getIp")

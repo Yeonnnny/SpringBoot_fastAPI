@@ -1,6 +1,8 @@
 package com.example.lstm.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +36,7 @@ public class ProdDTO {
     private String remoteIp;
     private String country;
     private int hitCount;
-    private float lstmPredictProba;
+    private double lstmPredictProba;
     private boolean lstmPredict;
     private YesOrNo judge;
     private String customerId;
@@ -44,6 +46,8 @@ public class ProdDTO {
     
     private String originalFileName;
     private String savedFileName;
+
+    private List<Map<String,Object>> prohibit;
 
     public static ProdDTO toDTO(ProdEntity prodEntity) {
         return ProdDTO.builder()

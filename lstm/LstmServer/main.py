@@ -62,7 +62,6 @@ import random
 
 # 클래스 객체 
 class Lstm(BaseModel):
-    prodId : str
     productNM : str
     productDesc : str
 
@@ -125,13 +124,13 @@ def predictLstm(lstm:Lstm):
 
     data = pd.DataFrame({'CATALOG_NM':[lstm.productNM],'CATALOG_DESC':[lstm.productDesc]})
 
-    # 데이터 클랜징 
+    # Step 0 : 데이터 클랜징 
     cleansingData = preprocess_text(data)
     print(cleansingData)
 
-    # Step 1: Tokenization
+    # Step 1 : 토큰화 전처리
     tokenizer = Tokenizer()
-    # tokenizer.fit_on_texts(cleansingData['CATALOG_DESC']+ cleansingData['CATALOG_NM'])
+    # tokenizer.fit_on_texts(cleansingData['CATALOG_DESC']+cleansingData['CATALOG_NM'])
     tokenizer.fit_on_texts(pd.concat([cleansingData['CATALOG_DESC'], cleansingData['CATALOG_NM']]))
     vocab_size = len(tokenizer.word_index) + 1
 
@@ -142,97 +141,58 @@ def predictLstm(lstm:Lstm):
     x_new_nm = pad_sequences(sequences_new_nm, maxlen=31, padding='post')
     print(x_new_nm)
 
-    # =============== 여기까지는 됨 (모델 로딩이 안돼..)===================
+    # Step 2 : 모델 로드 
+    model = load_model("02-0.805.hdf5")
+    # model = load_model("01-0.803.hdf5")
 
-    # 모델 로드 
-    # model = load_model("02-0.805.hdf5")
-    # model = load_model("02-0.805.hdf5", custom_objects={'Orthogonal': Orthogonal})
-    try:
-        # 모델 로드 시도
-        # model = load_model('02-0.805.hdf5')///
-        model = tf.keras.models.load_model('01-0.803.hdf5')
-        
-        # 새 데이터에 대해 예측
-        y_pred = model.predict([x_new_desc, x_new_nm])
-        print("==============" + y_pred)
+    # Step 3 : 예측 
+    y_pred = model.predict([x_new_desc, x_new_nm])
+    print(y_pred[0][0])
 
-        # 임계값
-        threshold = 0.8
+    # 임계값
+    threshold = 0.8
 
-        # 새 데이터에 대한 예측 결과
-        lstm_predict = (y_pred > threshold).astype(int)
-        lstm_predict_proba = model.predict([x_new_desc, x_new_nm])
-        print("====lstm_predict : "+lstm_predict)
-        print("====lstm_predict_proba : "+lstm_predict_proba)
-        
-    except Exception as e:
-        print(e)
+    # 새 데이터에 대한 예측 결과
+    lstm_predict = (y_pred[0][0] > threshold).astype(int)
+    lstm_predict_proba = np.round(y_pred[0][0]*100,2)
+    print("====lstm_predict : "+str(lstm_predict))
+    print("====lstm_predict_proba : "+str(lstm_predict_proba))
 
-
-    return JSONResponse({'name':"도연"})
     #=========== 금지어 유사도 =============
     # 정상(1)인 경우 값 반환 / 이상(0)인 경우 금지어유사도까지 확인
-    # if lstm_predict==1:
-    #     result = {'lstm_predict':lstm_predict, 'lstm_predict_proba':np.round(lstm_predict_proba*100,2)}
-    #     return JSONResponse(result)
-    # else:
-    #     # 상품 데이터, 금지어사전 원본
-    #     ori_prohibited_words = pd.read_csv('IPR리스트_231218.csv')
-
-    #     # 금지어사전 하나의 리스트로 변환
-    #     prohibited_words_list = ori_prohibited_words['KEYWORD'].str.lower().tolist()
-
-    #     # 결과를 저장할 리스트 생성 (상품 아이디와 lstm결과도 넣어줌)
-    #     result = [{'prodId':lstm.prodId, 'lstm_predict':lstm_predict,"lstm_predict_proba":lstm_predict_proba}]
-
-    #     # 상품 설명만 사용 (데이터 클랜징된 데이터)
-    #     # 선택한 상품 설명에 대해 처리
-    #     # 상품 설명의 문장을 단어로 분리
-    #     words_in_desc = cleansingData['CATALOG_DESC'][0]
-
-    #     # 각 상품 설명의 단어와 금지어 사전의 모든 단어 비교
-    #     for desc_word in words_in_desc:
-    #         for prohibited_word in prohibited_words_list:
-    #             similarity_score = fuzz.ratio(prohibited_word, desc_word)
-    #             if similarity_score >= 80:
-    #                 result.append({
-    #                     'Product_Description': desc_word, # desc에서 금지어와 유사한 단어
-    #                     'Prohibited_Word': prohibited_word, # 금지어리스트의 단어
-    #                     'Similarity_Score': similarity_score # 금지어 유사도
-    #                 })
-        # return JSONResponse(content=result)
-
+    if lstm_predict==1:
+        result = [{"lstm_predict":str(lstm_predict), "lstm_predict_proba": str(lstm_predict_proba)}]
         
+        # print(JSONResponse(result))
+        return JSONResponse(result)
+    else:
+        # 상품 데이터, 금지어사전 원본
+        ori_prohibited_words = pd.read_csv('IPR리스트_231218.csv')
 
+        # 금지어사전 하나의 리스트로 변환
+        prohibited_words_list = ori_prohibited_words['KEYWORD'].str.lower().tolist()
 
+        # 결과를 저장할 리스트 생성 (상품 아이디와 lstm결과도 넣어줌)
+        result = [{"lstm_predict":str(lstm_predict),"lstm_predict_proba":str(lstm_predict_proba)}]
 
-    # # 토큰화 전처리 파일
-    # with open("tokenizer_6_6.pkl", "rb") as f:
-    #     tokenizer = dill.load(f)
+        # 상품 설명만 사용 (데이터 클랜징된 데이터)
+        # 선택한 상품 설명에 대해 처리
+        # 상품 설명의 문장을 단어로 분리
+        words_in_desc = cleansingData['CATALOG_DESC'][0]
 
-    #      model = load_model("01-0.805.hdf5")
+        # 각 상품 설명의 단어와 금지어 사전의 모든 단어 비교
+        for desc_word in words_in_desc:
+            for prohibited_word in prohibited_words_list:
+                similarity_score = np.round(fuzz.ratio(prohibited_word, desc_word),2)
+                if similarity_score >= 80:
+                    result.append({
+                        "Similar_Word": desc_word, # desc에서 금지어와 유사한 단어
+                        "Prohibited_Word": prohibited_word, # 금지어리스트의 단어
+                        "Similarity_Score": str(similarity_score) # 금지어 유사도
+                    })
+        print(result)
 
-    #      # Tokenize and pad the new data
-    #      sequences_new_desc = tokenizer.texts_to_sequences(cleansingData['CATALOG_DESC'])
-    #      sequences_new_nm = tokenizer.texts_to_sequences(cleansingData['CATALOG_NM'])
-    #      print(sequences_new_nm)
-
-    #      x_new_desc = pad_sequences(sequences_new_desc, maxlen=3727, padding='post')
-    #      x_new_nm = pad_sequences(sequences_new_nm, maxlen=31, padding='post')
-
-    #      # 새 데이터에 대해 예측
-    #      y_pred = model.predict([x_new_desc, x_new_nm])
-
-    #      # 임계값
-    #      threshold = 0.8
-
-    #      # 새 데이터에 대한 예측 결과
-    #      lstm_predict = (y_pred > threshold).astype(int)
-    #      lstm_predict_proba = model.predict([x_new_desc, x_new_nm])
-        
-    #      result = {'lstm_predict':lstm_predict, 'lstm_predict_proba':np.round(lstm_predict_proba*100,2)}
-
-    #      return JSONResponse(result)
+        return JSONResponse(content=result)   
     
     
 
