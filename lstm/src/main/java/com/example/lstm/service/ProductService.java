@@ -53,11 +53,12 @@ public class ProductService {
         Boolean lstmPredict = false;
         Double lstmPredictProba= 0.0;
 
-        
+        // 리스트 사이즈 == 1 : lstm 값이 1인 경우 , lstm 값이 0인데 금지어 유사도가 결과가 나오지 않은 경우
         if (result.size()==1) {
             lstmPredict = String.valueOf(result.get(0).get("lstm_predict")).equals("1")? true:false;
             lstmPredictProba = Double.parseDouble(String.valueOf(result.get(0).get("lstm_predict_proba")));
-        }else{
+        } // 리스트 사이즈 >=1 : lstm 값이 0이고 금지어 유사도 결과가 1개 이상 나온 경우
+        else{ 
             lstmPredict = String.valueOf(result.get(0).get("lstm_predict")).equals("1")? true:false;
             lstmPredictProba = Double.parseDouble(String.valueOf(result.get(0).get("lstm_predict_proba")));
 

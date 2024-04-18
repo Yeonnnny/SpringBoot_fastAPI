@@ -154,7 +154,8 @@ def predictLstm(lstm:Lstm):
 
     # 새 데이터에 대한 예측 결과
     lstm_predict = (y_pred[0][0] > threshold).astype(int)
-    lstm_predict_proba = np.round(y_pred[0][0]*100,2)
+    lstm_predict_proba = y_pred[0][0] 
+
     print("====lstm_predict : "+str(lstm_predict))
     print("====lstm_predict_proba : "+str(lstm_predict_proba))
 
